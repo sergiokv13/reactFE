@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { currentUser } from '../../actions/authActions'
+import Loader from '../loader/Loader'
 
 class TransferItem extends Component {
   
@@ -11,7 +12,8 @@ class TransferItem extends Component {
     this.state = {
       macAddress: '4844878FCA26',
       selectedTech: '',
-      techs: []
+      techs: [],
+      loading: false
     }
   }
 
@@ -56,25 +58,28 @@ class TransferItem extends Component {
               {techsOptions}
             </select>
           </div>
-          <button type="submit" 
+          { this.state.loading ? <Loader/> : <button type="submit" 
                   value="Submit" 
                   onClick={this.fetchPlaceItem}
                   className="btn btn-success"
-          >Transfer</button>
+          >Transfer</button> }
         </form>
       </div>
     )
   }
 
   fetchPlaceItem(event) {
-    
-    
+    this.setState({loading: true});
     fetch('http://localhost:3000/inventory/transfer_item?item_mac=' 
       + this.state.macAddress 
       + '&location_id='+ this.state.selectedTech)
       .then(res => res.json())
-      .then(data => alert( data.data? data.data : "The item is already in your truck"))
-      .catch(error => alert("Technical debt - show error message"))
+      .then(data => {
+        this.setState({loading: false});
+        alert( data.data? data.data : "The item is already in your truck")})
+      .catch(error => {
+        this.setState({loading: false});
+        alert("Technical debt - show error message")})
     event.preventDefault()
   }
 

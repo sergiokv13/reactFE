@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Loader from '../loader/Loader';
 
 
 class TechInventory extends Component {
@@ -9,7 +10,8 @@ class TechInventory extends Component {
     this.state = {
       inventory: [],
       loscationId: '',
-      truckName: ''
+      truckName: '',
+      loading: false
     }
   }
 
@@ -59,7 +61,7 @@ class TechInventory extends Component {
             </tr>
           </thead>
           <tbody>
-            {inventoryRows}
+            { this.state.loading ? <Loader/> : inventoryRows }
           </tbody>
         </table>
       </div>
@@ -67,9 +69,12 @@ class TechInventory extends Component {
   }
 
   fetchAPI(location){
+    this.setState({loading: true});
     fetch('http://localhost:3000/inventory/get?location_id=' + location)
       .then(res => res.json())
-      .then(data => this.setState({inventory: data.data}))
+      .then(data => {
+        // this.setState({loading: false});
+        this.setState({inventory: data.data}) })
   }
 
 }

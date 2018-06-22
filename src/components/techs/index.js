@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { currentUser } from '../../actions/authActions'
 import { Link } from 'react-router-dom';
+import Loader from '../loader/Loader';
 
 
 
@@ -10,15 +11,19 @@ class TechsView extends Component {
   constructor(props){
     super(props)
     this.state = {
-      techs: []
+      techs: [],
+      loading: false
     }
   }
 
   componentWillMount() {
-    this.props.currentUser()
+    this.props.currentUser();
+    this.setState({loading: true});
     fetch('http://localhost:3000/local_techs/get?employee_id=' + this.props.user.id)
       .then(res => res.json())
-      .then(data => this.setState({techs: data.data}))
+      .then(data => {
+        this.setState({loading: false});
+        this.setState({techs: data.data})})
   }
 
   render() {
@@ -50,7 +55,7 @@ class TechsView extends Component {
               </tr>
             </thead>
             <tbody>
-              { techsRows }
+              { this.state.loading ? <Loader/> : techsRows }
             </tbody>
           </table>
         </div>

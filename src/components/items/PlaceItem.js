@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { currentUser } from '../../actions/authActions'
+import Loader from '../loader/Loader'
 
 class PlaceItem extends Component {
   
@@ -10,6 +11,7 @@ class PlaceItem extends Component {
     this.fechPlaceItem = this.fechPlaceItem.bind(this)
     this.state = {
       macAddress: '4844878FCA26',
+      loading: false
     }
   }
 
@@ -33,22 +35,27 @@ class PlaceItem extends Component {
               />
             </div>
             
-            <button type="submit" 
+            { this.state.loading ? <Loader/> : <button type="submit" 
                     value="Submit" 
                     onClick={this.fechPlaceItem}
                     className="btn btn-success"
-            >Place</button>
+            >Place</button> }
           </form>
         </div>
       )
   }
 
   fechPlaceItem(event) {
-    event.preventDefault()
+    event.preventDefault();
+    this.setState({loading: true});
     fetch('http://localhost:3000/inventory/place_item?item_mac=' + this.state.macAddress+ '&employee_id=' + this.props.user.id)
       .then(res => res.json())
-      .then(data => alert( data.data? data.data : "The item is already in use"))
-      .catch(error => alert("Technical debt - show error message"))
+      .then(data => {
+        this.setState({loading: false});
+        alert( data.data? data.data : "The item is already in use")})
+      .catch(error => {
+        this.setState({loading: false});
+        alert("Technical debt - show error message")})
   }
 
   handleInputChange(event) {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import Loader from '../loader/Loader'
 
 class CheckStatus extends Component {
   
@@ -9,6 +10,7 @@ class CheckStatus extends Component {
     this.fechCheckStatus = this.fechCheckStatus.bind(this)
     this.state = {
       macAddress: '4844878FCA26',
+      loading: false
     }
   }
 
@@ -28,22 +30,28 @@ class CheckStatus extends Component {
               />
             </div>
             
-            <button type="submit" 
+            { this.state.loading ? <Loader/> : <button type="submit" 
                     value="Submit" 
                     onClick={this.fechCheckStatus}
                     className="btn btn-success"
-            >Check</button>
+            >Check</button> }
           </form>
         </div>
       )
   }
 
   fechCheckStatus(event) {
-    event.preventDefault()
+    event.preventDefault();
+    this.setState({loading: true});
     fetch('http://localhost:3000/inventory/check_mac_status?item_mac=' + this.state.macAddress)
       .then(res => res.json())
-      .then(data => alert(data.data))
-      .catch(error => alert("Technical debt - show error message"))
+      .then(data => {
+        this.setState({loading: false});
+        alert(data.data)})
+      .catch(error => {
+        this.setState({loading: false});
+        alert("Technical debt - show error message")
+      })
   }
 
   handleInputChange(event) {

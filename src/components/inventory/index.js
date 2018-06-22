@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { currentUser } from '../../actions/authActions'
 import TechInventory from './TechInventory'
+import Loader from '../loader/Loader'
 
 class InventoryView extends Component {
 
@@ -10,7 +11,8 @@ class InventoryView extends Component {
     this.state = {
       techs: [],
       techLocationId: '',
-      truckName: ''
+      truckName: '',
+      loading: false
     }
     this.handleSelectChange = this.handleSelectChange.bind(this)
   }
@@ -25,9 +27,12 @@ class InventoryView extends Component {
       truckName: truckName
     })
 
+    this.setState({loading: true});
     fetch('http://localhost:3000/local_techs/get?employee_id=' + this.props.user.id)
       .then(res => res.json())
-      .then(data => this.setState({techs: data.data}))
+      .then(data => {
+        this.setState({loading: false});
+        this.setState({techs: data.data})})
   }
 
   componentWillReceiveProps(nextProps) {
@@ -59,6 +64,7 @@ class InventoryView extends Component {
             <option value={this.props.user.locationId}> My truck </option>
             {techsOptions}
           </select>
+          { this.state.loading ? <Loader/> : null}
           <TechInventory 
             locationId={this.state.techLocationId}
             truckName={this.state.truckName}
