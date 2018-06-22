@@ -55,9 +55,10 @@ class TechsView extends Component {
               </tr>
             </thead>
             <tbody>
-              { this.state.loading ? <Loader/> : techsRows }
+              { techsRows }
             </tbody>
           </table>
+          { this.state.loading ? <Loader/> : null }
         </div>
       )
   }

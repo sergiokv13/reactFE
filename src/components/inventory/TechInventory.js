@@ -61,9 +61,10 @@ class TechInventory extends Component {
             </tr>
           </thead>
           <tbody>
-            { this.state.loading ? <Loader/> : inventoryRows }
+            { inventoryRows }
           </tbody>
         </table>
+        { this.state.loading ? <Loader/> : null }
       </div>
     )
   }
